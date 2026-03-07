@@ -1,5 +1,6 @@
 {% extends 'blog/base.html' %}
 {% block content %}
+<h1 class="mb-3">Posts by {{ view.kwargs.username }} ({{ page_obj.paginator.count }})</h1>
     {% for post in posts %}
         <!-- <h1>{{ post.title }}</h1>
         <p>By {{ post.author }} on {{ post.date_posted }}</p>
@@ -40,25 +41,3 @@
         {% endif %}
     </div>
 {% endblock content %}
-
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% if title %}
-        <title>Django Blog - {{ title }}</title>
-    {% else %}
-        <title>Django Blog</title>
-    {% endif %}
-</head>
-<body>
-    <h1>Blog Home!!!!</h1>
-     {% for post in posts %}
-        <h1>{{ post.title }}</h1>
-        <p>By {{ post.author }} on {{ post.date_posted }}</p>
-        <p>{{ post.content }}</p>
-     {% endfor %}
-</body>
-</html> -->
-
