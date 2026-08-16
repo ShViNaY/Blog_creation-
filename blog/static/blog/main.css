@@ -142,10 +142,43 @@ a.article-title:hover {
   background-color: #e6f4ff;
 }
 
+.auth-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.auth-footer__meta {
+  flex: 1;
+  text-align: left;
+}
+
+.auth-footer__action {
+  margin-left: auto;
+  text-align: right;
+}
+
+.form-group.text-right {
+  text-align: right;
+}
+
 /* Larger touch targets on small screens */
 @media (max-width: 576px) {
   .sidebar-link {
     padding: 16px 18px;
     font-size: 1rem;
+  }
+
+  .auth-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .auth-footer__meta,
+  .auth-footer__action {
+    width: 100%;
+    text-align: center;
+    margin-left: 0;
   }
 }
