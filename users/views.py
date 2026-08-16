@@ -2,7 +2,8 @@ from django.shortcuts import  render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.models import User
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 import logging
 
@@ -51,5 +52,18 @@ def profile(request):
         'p_form' : p_form
     }
     return render(request, 'users/profile.html', context)
+
+
+@login_required
+@user_passes_test(lambda user: user.is_staff or user.is_superuser)
+def delete_account(request):
+    if request.method == 'POST':
+        user_to_delete = request.user
+        username = user_to_delete.username
+        logout(request)
+        user_to_delete.delete()
+        messages.warning(request, f'Account "{username}" was deleted.')
+        return redirect('login')
+    return redirect('profile')
 
 

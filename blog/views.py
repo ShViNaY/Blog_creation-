@@ -54,18 +54,22 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         post = self.get_object()
         if self.request.user == post.author:
             return True
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            return True
         return False
-    
+
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
     # success_url = '/'
     success_url = reverse_lazy('blog-home')
 
     def test_func(self):
-            post = self.get_object()
-            if self.request.user == post.author:
-                return True
-            return False
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        if self.request.user.is_staff or self.request.user.is_superuser:
+            return True
+        return False
 
 class PostListView(ListView):
     model = Post

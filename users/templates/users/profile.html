@@ -24,5 +24,15 @@
                 </button>
             </div>
         </form>
+
+        {% if user.is_staff or user.is_superuser %}
+            <hr>
+            <form method="POST" action="{% url 'delete-account' %}" onsubmit="return confirm('Delete this admin account? This action cannot be undone.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    Delete This Account
+                </button>
+            </form>
+        {% endif %}
     </div>
 {% endblock content %}
