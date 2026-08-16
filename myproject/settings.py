@@ -20,13 +20,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-$id5^eutvvqcf8zgow6&+kz9(b=r3e6jxxhi=s)s0++v-po#33'
+# SECURITY: load secret key and debug from environment
+from django.core.management.utils import get_random_secret_key
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+# If no secret is provided, allow a temporary key when running in development
+if not SECRET_KEY:
+    if os.environ.get('DJANGO_DEBUG', 'True') == 'True':
+        SECRET_KEY = get_random_secret_key()
+    else:
+        raise Exception('DJANGO_SECRET_KEY environment variable must be set in production')
 
-ALLOWED_HOSTS = []
+# DEBUG driven by environment variable (default True for local development)
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+
+# ALLOWED_HOSTS driven by environment (comma-separated). Defaults to localhost for dev.
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -125,6 +134,24 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
+
+# Production security hardening (only enabled when DEBUG is False)
+if not DEBUG:
+    # Secure cookies
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # Redirect all HTTP to HTTPS
+    SECURE_SSL_REDIRECT = True
+
+    # HSTS
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+    # Browser security headers
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

@@ -4,6 +4,9 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 # Create your views here.
@@ -16,12 +19,13 @@ def register(request):
             messages.success(request, f'Your account has been created. You are now able to login!')
             return redirect('login')
         else:
-            print(form.errors)
+            logger.warning('Registration form invalid: %s', form.errors)
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
     
 def logout_view(request):
+    request.session.flush()
     logout(request)
     return render(request, 'users/logout.html')
 
