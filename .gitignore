@@ -1,0 +1,10 @@
+
+# Auto-generated ignores
+db.sqlite3
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.vscode/
+.pytest_cache/
+/media/
