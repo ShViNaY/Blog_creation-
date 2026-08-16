@@ -17,10 +17,13 @@
                 </button>
             </div>
         </form>
-        <div class="border-top pt-3">
-            <small class="text-muted">
-                Already Have An Account? <a class="ml-2" href="{% url 'login' %}">Sign In</a>
-            </small>
+        <div class="border-top pt-3 d-flex flex-column flex-md-row justify-content-between align-items-center">
+            <div class="mb-2 mb-md-0 text-center text-md-left w-100">
+                <small class="text-muted">Already have an account? Sign in to manage your posts and profile.</small>
+            </div>
+            <div class="w-100 text-center text-md-right">
+                <a class="btn btn-outline-info" href="{% url 'login' %}">Sign In</a>
+            </div>
         </div>
     </div>
 {% endblock content %}
