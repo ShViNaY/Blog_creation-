@@ -1,0 +1,151 @@
+body {
+  background: linear-gradient(180deg, #edf4f8 0%, #f8fafc 100%);
+  color: #1f2937;
+  margin-top: 5rem;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #1f2937;
+}
+
+main.container {
+  padding-top: 2rem;
+}
+
+ul {
+  margin: 0;
+}
+
+.bg-steel {
+  background-color: #5f788a;
+}
+
+.site-header .navbar-nav .nav-link {
+  color: #cbd5db;
+}
+
+.site-header .navbar-nav .nav-link:hover {
+  color: #ffffff;
+}
+
+.site-header .navbar-nav .nav-link.active {
+  font-weight: 500;
+}
+
+.content-section {
+  background: #ffffff;
+  padding: 18px 22px;
+  border: 1px solid #dfe7ee;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+.about-card {
+  max-width: 760px;
+  padding: 2rem 2.2rem;
+}
+
+.about-card h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.about-card p {
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: #475569;
+  margin-bottom: 0.8rem;
+}
+
+.article-title {
+  color: #444444;
+}
+
+a.article-title:hover {
+  color: #428bca;
+  text-decoration: none;
+}
+
+.article-content {
+  white-space: pre-line;
+}
+
+.article-img {
+  height: 65px;
+  width: 65px;
+  margin-right: 16px;
+}
+
+.article-metadata {
+  padding-bottom: 1px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #e3e3e3
+}
+
+.article-metadata a:hover {
+  color: #333;
+  text-decoration: none;
+}
+
+.article-svg {
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+}
+
+.account-img {
+  height: 125px;
+  width: 125px;
+  margin-right: 20px;
+  margin-bottom: 16px;
+}
+
+.account-heading {
+  font-size: 2.5rem;
+}
+
+.sidebar-list {
+  margin-top: 1rem;
+  padding-left: 0;
+}
+
+.sidebar-link {
+  display: block;
+  text-decoration: none;
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  width: 100%;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Keep Bootstrap list-group-item visuals while making the whole item clickable */
+.sidebar-link.list-group-item {
+  border: 1px solid #e6edf3;
+  border-left: 4px solid transparent;
+}
+
+.sidebar-link:hover,
+.sidebar-link:focus {
+  background-color: #f1fbff; /* subtle highlight */
+  color: #0b4da0;
+  border-color: #d0e8fb;
+  text-decoration: none;
+  transform: none; /* avoid shifting */
+}
+
+.sidebar-link:active {
+  background-color: #e6f4ff;
+}
+
+/* Larger touch targets on small screens */
+@media (max-width: 576px) {
+  .sidebar-link {
+    padding: 16px 18px;
+    font-size: 1rem;
+  }
+}
