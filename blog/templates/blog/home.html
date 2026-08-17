@@ -1,11 +1,23 @@
 {% extends 'blog/base.html' %}
 {% block content %}
+    {% if page_obj.number == 1 %}
+        <div class="hero-section content-section text-center">
+            <span class="hero-kicker">Welcome to BlogFlow</span>
+            <h1 class="hero-title">Share Ideas. Learn. Build.</h1>
+            <p class="hero-subtitle">Discover and publish articles about technology, programming, and development.</p>
+        </div>
+
+        <div class="section-heading">
+            <span>Find Latest Articles</span>
+        </div>
+    {% endif %}
+
     {% for post in posts %}
         <!-- <h1>{{ post.title }}</h1>
         <p>By {{ post.author }} on {{ post.date_posted }}</p>
         <p>{{ post.content }}</p> -->
         <article class="media content-section">
-            <img class = "rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="">
+            <img class = "rounded-circle article-img" src="{{ post.author.profile.image_url }}" alt="">
         <div class="media-body">
             <div class="article-metadata">
                 <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>

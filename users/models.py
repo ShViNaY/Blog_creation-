@@ -24,7 +24,7 @@ def validate_profile_image(value):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE)
     image = models.ImageField(
-        default = 'profile_pics/ADMIN.jpg',
+        default = 'default.jpg',
         upload_to = 'profile_pics',
         validators=[validate_profile_image],
     )
@@ -53,10 +53,24 @@ class Profile(models.Model):
 
     @property
     def image_url(self):
-        """Return a safe URL for the profile image; falls back to admin default if needed."""
+        """Return a safe URL for the profile image with sensible fallbacks."""
+        from django.conf import settings
+
+        default_image = settings.MEDIA_URL + 'default.jpg'
+        admin_default = settings.MEDIA_URL + 'profile_pics/ADMIN.jpg'
+
         try:
-            # image.url raises ValueError if the file is missing, so guard it.
-            return self.image.url
+            image_name = getattr(self.image, 'name', '')
+            if image_name:
+                if image_name in ('default.jpg', 'profile_pics/default.jpg'):
+                    if self.user.is_staff or self.user.is_superuser:
+                        return admin_default
+                    return default_image
+                return self.image.url
         except Exception:
-            from django.conf import settings
-            return settings.MEDIA_URL + 'profile_pics/ADMIN.jpg'
+            pass
+
+        if self.user.is_staff or self.user.is_superuser:
+            return admin_default
+
+        return default_image
