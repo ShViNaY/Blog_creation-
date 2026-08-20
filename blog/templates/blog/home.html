@@ -8,6 +8,10 @@
         </div>
     {% endif %}
 
+    {% if status_message %}
+        <div class="alert alert-info mt-3">{{ status_message }}</div>
+    {% endif %}
+
     <div class="section-heading">
         {% if page_obj.number == 1 and page_obj.paginator.num_pages|default:0 > 1 %}
             <a href="?page=2">Latest Articles</a>

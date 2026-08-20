@@ -87,19 +87,27 @@ class PostListView(ListView):
         "Latest Articles" on page 1 link to page 2 which will contain the
         newest posts.
         """
-        context = super().get_context_data(**kwargs)
+        # Build context manually to avoid Django's built-in pagination raising
+        # an InvalidPage error before this method can run. This view implements
+        # a synthetic pagination where page 1 is the hero page.
+        context = {}
+        context['view'] = self
+
         queryset = self.get_queryset()
         paginator = Paginator(queryset, self.paginate_by)
         real_num_pages = paginator.num_pages
         synthetic_num_pages = real_num_pages + 1
 
-        # Requested (synthetic) page number
+        # Requested (synthetic) page number (keep original for messaging)
         try:
-            req_page = int(self.request.GET.get('page', '1'))
-            if req_page < 1:
-                req_page = 1
+            orig_req = int(self.request.GET.get('page', '1'))
+            if orig_req < 1:
+                orig_req = 1
         except Exception:
-            req_page = 1
+            orig_req = 1
+
+        # Clamp the requested synthetic page into the valid range [1, synthetic_num_pages]
+        req_page = min(orig_req, synthetic_num_pages) if synthetic_num_pages >= 1 else 1
 
         class SimplePaginator:
             def __init__(self, num_pages):
@@ -128,6 +136,11 @@ class PostListView(ListView):
 
         synthetic_paginator = SimplePaginator(synthetic_num_pages)
 
+        status_message = None
+        if orig_req > synthetic_num_pages:
+            # Inform the user they requested beyond the last page
+            status_message = 'Reached the last page.'
+
         if req_page == 1:
             # Hero page: no posts displayed here
             page_obj = SimplePage(1, synthetic_paginator, [])
@@ -136,10 +149,14 @@ class PostListView(ListView):
         else:
             # Map synthetic page N to real page N-1
             real_page_num = max(1, req_page - 1)
-            # If requested beyond range, clamp to last real page
+            # Clamp to last real page if necessary
             real_page_num = min(real_page_num, real_num_pages) if real_num_pages > 0 else 1
-            real_page = paginator.page(real_page_num) if real_num_pages > 0 else None
-            object_list = real_page.object_list if real_page is not None else []
+            try:
+                real_page = paginator.page(real_page_num) if real_num_pages > 0 else None
+                object_list = real_page.object_list if real_page is not None else []
+            except Exception:
+                # Any issue reading a real page yields an empty result set
+                object_list = []
             page_obj = SimplePage(req_page, synthetic_paginator, object_list)
             is_paginated = synthetic_num_pages > 1
 
@@ -149,6 +166,8 @@ class PostListView(ListView):
         context['paginator'] = synthetic_paginator
         context['is_paginated'] = is_paginated
         context['object_list'] = object_list
+        if status_message:
+            context['status_message'] = status_message
         return context
 
 class UserPostListView(ListView):
