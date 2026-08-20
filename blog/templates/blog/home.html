@@ -6,17 +6,15 @@
             <h1 class="hero-title">Share Ideas. Learn. Build.</h1>
             <p class="hero-subtitle">Discover and publish articles about technology, programming, and development.</p>
         </div>
-    {% else %}
-        <div class="section-heading">
-            <span>Latest Articles</span>
-        </div>
+    {% endif %}
 
-        {% for post in posts %}
-            <!-- <h1>{{ post.title }}</h1>
-            <p>By {{ post.author }} on {{ post.date_posted }}</p>
-            <p>{{ post.content }}</p> -->
-            <article class="media content-section">
-                <img class = "rounded-circle article-img" src="{{ post.author.profile.image_url }}" alt="">
+    <div class="section-heading">
+        <span>Latest Articles</span>
+    </div>
+
+    {% for post in posts %}
+        <article class="media content-section">
+            <img class = "rounded-circle article-img" src="{{ post.author.profile.image_url }}" alt="Profile image of {{ post.author }}">
             <div class="media-body">
                 <div class="article-metadata">
                     <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
@@ -25,9 +23,10 @@
                 <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
                 <p class="article-content">{{ post.content }}</p>
             </div>
-            </article>
-        {% endfor %}
-    {% endif %}
+        </article>
+    {% empty %}
+        <p>No posts yet. Be the first to <a href="{% url 'post-create' %}">create one</a>!</p>
+    {% endfor %}
 
     <div class="text-center mt-4">
         {% if is_paginated %}

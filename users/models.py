@@ -53,24 +53,31 @@ class Profile(models.Model):
 
     @property
     def image_url(self):
-        """Return a safe URL for the profile image with sensible fallbacks."""
+        """Return a safe URL for the profile image with sensible fallbacks.
+
+        Fallback to MEDIA files (media/default.jpg) when no uploaded image is present.
+        This ensures a user without a custom profile image gets a media-served default.
+        """
         from django.conf import settings
 
-        from django.templatetags.static import static
-
-        # serve committed default images via staticfiles
-        default_image = static('users/default.jpg')
-        admin_default = static('users/profile_pics/ADMIN.jpg')
+        # Prefer media-hosted defaults so they live under MEDIA_ROOT (media/default.jpg)
+        media_url = getattr(settings, 'MEDIA_URL', '/media/')
+        default_image = media_url + 'default.jpg'
+        admin_default = media_url + 'profile_pics/ADMIN.jpg'
 
         try:
             image_name = getattr(self.image, 'name', '')
+            # If the field stores a name but it's one of the placeholder names, return media default
             if image_name:
                 if image_name in ('default.jpg', 'profile_pics/default.jpg'):
                     if self.user.is_staff or self.user.is_superuser:
                         return admin_default
                     return default_image
-                return self.image.url
+                # If the ImageField has a URL attribute, return it (uploaded or stored file)
+                if getattr(self.image, 'url', None):
+                    return self.image.url
         except Exception:
+            # Any error retrieving the image should fall back to media defaults
             pass
 
         if self.user.is_staff or self.user.is_superuser:
