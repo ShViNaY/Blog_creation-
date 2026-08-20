@@ -9,7 +9,11 @@
     {% endif %}
 
     <div class="section-heading">
-        <span>Latest Articles</span>
+        {% if page_obj.number == 1 and page_obj.paginator.num_pages|default:0 > 1 %}
+            <a href="?page=2">Latest Articles</a>
+        {% else %}
+            <span>Latest Articles</span>
+        {% endif %}
     </div>
 
     {% for post in posts %}
@@ -24,8 +28,6 @@
                 <p class="article-content">{{ post.content }}</p>
             </div>
         </article>
-    {% empty %}
-        <p>No posts yet. Be the first to <a href="{% url 'post-create' %}">create one</a>!</p>
     {% endfor %}
 
     <div class="text-center mt-4">
