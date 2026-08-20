@@ -35,8 +35,10 @@ if not SECRET_KEY:
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 # ALLOWED_HOSTS driven by environment (comma-separated). Defaults to localhost for dev.
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
-
+ALLOWED_HOSTS = os.environ.get(
+    'DJANGO_ALLOWED_HOSTS',
+    os.environ.get('RENDER_EXTERNAL_HOSTNAME', 'localhost,127.0.0.1')
+).split(',')
 
 # Application definition
 
