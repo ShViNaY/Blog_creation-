@@ -24,5 +24,10 @@ urlpatterns = [
     path('', include('blog.urls')),
 
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Serve user-uploaded media files at MEDIA_URL from MEDIA_ROOT in all environments.
+# Note: django.views.static.serve is not recommended for high-load production but
+# Render's free services do not provide persistent storage or external object storage
+# by default. This allows media to be served from the app process. Keep in mind
+# uploaded files will be ephemeral on deploy/restart; use external storage for
+# persistence when available.
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

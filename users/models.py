@@ -56,8 +56,11 @@ class Profile(models.Model):
         """Return a safe URL for the profile image with sensible fallbacks."""
         from django.conf import settings
 
-        default_image = settings.MEDIA_URL + 'default.jpg'
-        admin_default = settings.MEDIA_URL + 'profile_pics/ADMIN.jpg'
+        from django.templatetags.static import static
+
+        # serve committed default images via staticfiles
+        default_image = static('users/default.jpg')
+        admin_default = static('users/profile_pics/ADMIN.jpg')
 
         try:
             image_name = getattr(self.image, 'name', '')
