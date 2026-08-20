@@ -1,13 +1,26 @@
-# Auto-generated ignores
-db.sqlite3
-venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
+
+# Virtual environment
+venv/
+.venv/
+
+# Django
+db.sqlite3
+staticfiles/
+
+# IDE
 .vscode/
 .pytest_cache/
-# /media/
-staticfiles/
 
 # Environment variables
 .env
+
+# User-uploaded media
+media/profile_pics/
+media/*_backup_*.zip
+
+# Local uploaded profile images
+profile_pics/

@@ -1,3 +1,4 @@
+from django.core.files.uploadedfile import UploadedFile
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -7,6 +8,8 @@ import os
 
 
 def validate_profile_image(value):
+    if not isinstance(value, UploadedFile):
+        return
     if value.size > 5 * 1024 * 1024:
         raise ValidationError('Image file size must be under 5MB.')
 

@@ -22,8 +22,7 @@
 
     {% for post in posts %}
         <article class="media content-section">
-            <img class = "rounded-circle article-img" src="{{ post.author.profile.image_url }}" alt="Profile image of {{ post.author }}">
-            <div class="media-body">
+            <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}" alt="Profile image of {{ post.author }}">            <div class="media-body">
                 <div class="article-metadata">
                     <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
                     <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
