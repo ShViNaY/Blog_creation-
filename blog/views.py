@@ -71,12 +71,85 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
             return True
         return False
 
+from django.core.paginator import Paginator
+
+
 class PostListView(ListView):
     model = Post
     template_name = 'blog/home.html'
     context_object_name = 'posts'
     ordering = ['-date_posted']
     paginate_by = 2
+
+    def get_context_data(self, **kwargs):
+        """Produce a synthetic pagination where page 1 is the hero-only page
+        and pages 2..(N+1) map to the real paginator pages 1..N. This makes
+        "Latest Articles" on page 1 link to page 2 which will contain the
+        newest posts.
+        """
+        context = super().get_context_data(**kwargs)
+        queryset = self.get_queryset()
+        paginator = Paginator(queryset, self.paginate_by)
+        real_num_pages = paginator.num_pages
+        synthetic_num_pages = real_num_pages + 1
+
+        # Requested (synthetic) page number
+        try:
+            req_page = int(self.request.GET.get('page', '1'))
+            if req_page < 1:
+                req_page = 1
+        except Exception:
+            req_page = 1
+
+        class SimplePaginator:
+            def __init__(self, num_pages):
+                self.num_pages = num_pages
+                self.page_range = range(1, num_pages + 1)
+
+        class SimplePage:
+            def __init__(self, number, paginator_obj, object_list):
+                self.number = number
+                self.paginator = paginator_obj
+                self.object_list = object_list
+
+            @property
+            def has_previous(self):
+                return self.number > 1
+
+            @property
+            def has_next(self):
+                return self.number < self.paginator.num_pages
+
+            def previous_page_number(self):
+                return max(1, self.number - 1)
+
+            def next_page_number(self):
+                return min(self.paginator.num_pages, self.number + 1)
+
+        synthetic_paginator = SimplePaginator(synthetic_num_pages)
+
+        if req_page == 1:
+            # Hero page: no posts displayed here
+            page_obj = SimplePage(1, synthetic_paginator, [])
+            object_list = []
+            is_paginated = synthetic_num_pages > 1
+        else:
+            # Map synthetic page N to real page N-1
+            real_page_num = max(1, req_page - 1)
+            # If requested beyond range, clamp to last real page
+            real_page_num = min(real_page_num, real_num_pages) if real_num_pages > 0 else 1
+            real_page = paginator.page(real_page_num) if real_num_pages > 0 else None
+            object_list = real_page.object_list if real_page is not None else []
+            page_obj = SimplePage(req_page, synthetic_paginator, object_list)
+            is_paginated = synthetic_num_pages > 1
+
+        # Replace context entries that Django's ListView would normally set
+        context['posts'] = object_list
+        context['page_obj'] = page_obj
+        context['paginator'] = synthetic_paginator
+        context['is_paginated'] = is_paginated
+        context['object_list'] = object_list
+        return context
 
 class UserPostListView(ListView):
     model = Post
