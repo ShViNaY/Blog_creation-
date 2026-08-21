@@ -65,6 +65,8 @@ A simple Django blog web application for creating and managing blog posts, user 
 
 ## Screenshots
 
+![Blog Flow](screenshots/BlogFlow.png)
+
 ![Home Page](screenshots/Home.png)
 
 ![About Page](screenshots/About.png)
