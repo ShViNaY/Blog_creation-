@@ -19,6 +19,17 @@ def validate_profile_image(value):
     try:
         with Image.open(value) as img:
             img.verify()
+        # Reset file pointer after Pillow reads the uploaded file so Django's storage
+        # can read it again when saving. Some UploadedFile/file-like objects
+        # advance their internal pointer during verification.
+        try:
+            value.seek(0)
+        except Exception:
+            try:
+                # Some wrappers store the file object on .file
+                value.file.seek(0)
+            except Exception:
+                pass
     except Exception:
         raise ValidationError('Upload a valid image file.')
 
