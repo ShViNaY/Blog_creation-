@@ -144,7 +144,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-# Supabase Storage
+# Supabase / S3 Storage configuration (optional)
 STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3.S3Storage",
@@ -167,8 +167,24 @@ AWS_QUERYSTRING_AUTH = False
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
-# MEDIA_ROOT = BASE_DIR / 'media'
-# MEDIA_URL = '/media/'
+# MEDIA configuration
+# If S3 credentials and bucket are provided, the existing STORAGES config will be used.
+# Otherwise fall back to the local filesystem for media to avoid file save errors
+# (useful when the production host does not provide S3 credentials).
+if AWS_STORAGE_BUCKET_NAME and AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
+    # When S3 is configured, rely on the STORAGES configuration above.
+    # DEFAULT_FILE_STORAGE may be provided by the storage backend package; leave
+    # the STORAGES dict in place for flexibility. Set MEDIA_URL to point at a
+    # custom domain if provided, otherwise use a sensible default.
+    if AWS_S3_CUSTOM_DOMAIN:
+        MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+    else:
+        MEDIA_URL = '/media/'
+else:
+    # Local filesystem storage for media (safe default when AWS is not configured)
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    MEDIA_ROOT = BASE_DIR / 'media'
+    MEDIA_URL = '/media/'
 
 
 # Production security hardening (only enabled when DEBUG is False)
